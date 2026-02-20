@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini Master Quiz - 50問で学ぶ生成AI</title>
+    <!-- Google Fonts: Roboto & Noto Sans JP -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Google Brand Colors */
+            --google-blue: #4285F4;
+            --google-red: #EA4335;
+            --google-yellow: #FBBC05;
+            --google-green: #34A853;
+
+            /* Light Theme (Material 3 inspired) */
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #202124;
+            --text-muted: #5f6368;
+            --border-color: #dadce0;
+            --hover-bg: #f1f3f4;
+            --primary-color: var(--google-blue);
+            
+            /* Feedback Colors */
+            --correct-bg: #e6f4ea;
+            --correct-text: #137333;
+            --incorrect-bg: #fce8e6;
+            --incorrect-text: #c5221f;
+            
+            --border-radius-lg: 24px;
+            --border-radius-md: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #202124;
+                --card-bg: #292a2d;
+                --text-main: #e8eaed;
+                --text-muted: #9aa0a6;
+                --border-color: #5f6368;
+                --hover-bg: #3c4043;
+                --primary-color: #8ab4f8; /* Lighter blue for dark mode */
+                
+                --correct-bg: rgba(52, 168, 83, 0.2);
+                --correct-text: #81c995;
+                --incorrect-bg: rgba(234, 67, 53, 0.2);
+                --incorrect-text: #f28b82;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Fallback to Roboto/Noto Sans, using Google Sans if installed locally */
+            font-family: 'Google Sans', 'Roboto', 'Noto Sans JP', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            width: 100%;
+            max-width: 800px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Google Color Top Bar */
+        .top-color-bar {
+            height: 6px;
+            width: 100%;
+            background: linear-gradient(to right, 
+                var(--google-blue) 0%, var(--google-blue) 25%, 
+                var(--google-red) 25%, var(--google-red) 50%, 
+                var(--google-yellow) 50%, var(--google-yellow) 75%, 
+                var(--google-green) 75%, var(--google-green) 100%);
+        }
+
+        .header {
+            padding: 30px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
+        /* G logo style text for branding */
+        .g-brand { color: var(--google-blue); }
+        .e-brand { color: var(--google-red); }
+        .m-brand { color: var(--google-yellow); }
+        .i-brand { color: var(--google-blue); }
+        .n-brand { color: var(--google-green); }
+        .i2-brand { color: var(--google-red); }
+
+        .header p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .content {
+            padding: 30px 40px 40px;
+        }
+
+        /* Buttons (Material style) */
+        .btn {
+            background-color: var(--primary-color);
+            color: #ffffff; /* Button text is always white/dark-contrast */
+            border: none;
+            padding: 12px 32px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 9999px; /* Pill shape */
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .btn { color: #202124; } /* Dark text on light blue button in dark mode */
+        }
+
+        .btn:hover {
+            box-shadow: var(--shadow-md);
+            filter: brightness(0.95);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+        .btn-outline:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Start Screen */
+        #start-screen {
+            text-align: center;
+        }
+
+        #start-screen p {
+            margin-bottom: 30px;
+            color: var(--text-muted);
+        }
+
+        /* Quiz Screen */
+        .progress-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .progress-container {
+            flex-grow: 1;
+            background-color: var(--hover-bg);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .progress-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            min-width: 60px;
+        }
+
+        .question-header {
+            margin-bottom: 15px;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            background-color: var(--hover-bg);
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+            padding: 16px 20px;
+            font-size: 1rem;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            font-family: inherit;
+            position: relative;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            border-color: var(--primary-color);
+            background-color: var(--hover-bg);
+        }
+
+        .option-btn:disabled {
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        /* Selected State Colors */
+        .option-btn.correct {
+            background-color: var(--correct-bg) !important;
+            border-color: var(--google-green) !important;
+            color: var(--correct-text) !important;
+            opacity: 1;
+        }
+        
+        .option-btn.incorrect {
+            background-color: var(--incorrect-bg) !important;
+            border-color: var(--google-red) !important;
+            color: var(--incorrect-text) !important;
+            opacity: 1;
+        }
+
+        /* Instant Feedback Area */
+        .feedback-area {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: var(--border-radius-md);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .feedback-area.correct { background-color: var(--correct-bg); border-left: 4px solid var(--google-green); }
+        .feedback-area.incorrect { background-color: var(--incorrect-bg); border-left: 4px solid var(--google-red); }
+
+        .feedback-result {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feedback-area.correct .feedback-result { color: var(--correct-text); }
+        .feedback-area.incorrect .feedback-result { color: var(--incorrect-text); }
+
+        .feedback-explanation {
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        /* Result Screen */
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0;
+            line-height: 1;
+        }
+
+        .accuracy-display {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Category Stats */
+        .category-stats {
+            background-color: var(--hover-bg);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .category-stats h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+            text-align: center;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+        
+        .stat-label {
+            width: 100px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .stat-bar-container {
+            flex-grow: 1;
+            background-color: var(--border-color);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .stat-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        .stat-value {
+            width: 40px;
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius-md);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        .modal-content h3 {
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .modal-content p {
+            margin-bottom: 25px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Top Bar Actions */
+        .top-actions {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .btn-text {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.2s, color 0.2s;
+            font-family: inherit;
+            font-weight: 500;
+        }
+
+        .btn-text:hover {
+            background-color: var(--hover-bg);
+            color: var(--text-main);
+        }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .content { padding: 25px 20px; }
+            .question-text { font-size: 1.15rem; }
+            .score-display { font-size: 3rem; }
+            .stat-label { width: 80px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="top-color-bar"></div>
+    <div class="header">
+        <h1>
+            <span class="g-brand">G</span><span class="e-brand">e</span><span class="m-brand">m</span><span class="i-brand">i</span><span class="n-brand">n</span><span class="i2-brand">i</span>
+            Master Quiz
+        </h1>
+        <p>基礎から実践・雑学まで、GoogleのAIを深く学ぶ50問</p>
+    </div>
+
+    <div class="content">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h2 style="margin-bottom: 10px; font-weight: 500;">あなたの生成AI活用力をテストします</h2>
+            <p>
+                基礎知識(40%)、実践的活用(50%)、雑学(10%)からなる全50問の3択クイズ。<br>
+                1問ごとに表示される解説を読みながら、効率的に知識をアップデートしましょう。
+            </p>
+            <div id="start-actions" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <button id="start-btn" class="btn" onclick="startQuiz()">
+                    クイズを始める
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                </button>
+                
+                <div id="resume-actions" class="hidden" style="display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;">
+                    <p id="resume-text" style="margin-bottom: 5px; color: var(--primary-color); font-weight: 500;">現在 問1 進行中</p>
+                    <button class="btn" onclick="resumeQuiz()">
+                        続きから始める
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </button>
+                    <button class="btn-text" onclick="startQuiz()" style="font-size: 0.85rem; padding: 8px;">
+                        最初からやり直す
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="top-actions">
+                <button class="btn-text" onclick="showHomeConfirmModal()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    ホームへ戻る
+                </button>
+            </div>
+
+            <div class="progress-wrapper">
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <div id="progress-text" class="progress-text">1 / 50</div>
+            </div>
+
+            <div class="question-header">
+                <span id="category-badge" class="category-badge">カテゴリ</span>
+            </div>
+            
+            <h3 id="question-text" class="question-text"></h3>
+            
+            <div id="options-container" class="options">
+                <!-- Options injected by JS -->
+            </div>
+
+            <!-- Instant Feedback Area -->
+            <div id="feedback-area" class="feedback-area hidden">
+                <div id="feedback-result" class="feedback-result"></div>
+                <div id="feedback-explanation" class="feedback-explanation"></div>
+                <button id="next-btn" class="btn" onclick="nextQuestion()">次の問題へ</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden">
+            <div class="result-header">
+                <h2>クイズ完了！お疲れ様でした。</h2>
+                <div class="score-display" id="final-score">0</div>
+                <div class="accuracy-display" id="final-accuracy">正答率: 0%</div>
+            </div>
+            
+            <!-- Category Analysis -->
+            <div class="category-stats">
+                <h3>📊 カテゴリ別 正答率</h3>
+                <div id="category-stats-container">
+                    <!-- Stats injected by JS -->
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-outline" onclick="restartQuiz()">もう一度挑戦する</button>
+                <button class="btn btn-outline" onclick="downloadCSV()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:5px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    結果をCSV出力
+                </button>
+                <button class="btn" onclick="shareOnX()" style="background-color: #000; color: #fff;">
+                    <!-- X (Twitter) icon -->
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="margin-right:5px;"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    結果をポスト
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Home Confirm Modal -->
+<div id="home-confirm-modal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h3>ホーム画面に戻りますか？</h3>
+        <p>現在の解答状況は保存され、後で続きから再開できます。</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeHomeConfirmModal()">キャンセル</button>
+            <button class="btn" style="background-color: var(--primary-color);" onclick="returnToHome()">ホームへ戻る</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 問題データ (全50問)
+    const quizData = [
+        // --- 基礎知識 (40%) ---
+        {
+            category: "基礎知識",
+            q: "Googleが開発した生成AI「Gemini」の最大の特徴を一つ選ぶとすれば何ですか？",
+            options: ["テキストしか理解できない点", "最初からマルチモーダル（画像、音声、テキストなどを同時に理解・処理できる）として構築された点", "オープンソースで誰でも自由にコードを改変できる点"],
+            answer: 1,
+            explanation: "Geminiは最初からテキスト、画像、音声、動画、コードなどの異なる種類の情報を組み合わせて処理できる「ネイティブ・マルチモーダル」として設計されています。"
+        },
+        {
+            category: "基礎知識",
+            q: "Geminiモデルの性能や用途に応じた主要なサイズ展開として正しい組み合わせはどれですか？",
+            options: ["Micro, Standard, Huge", "Alpha, Beta, Gamma", "Nano, Flash, Pro, Ultra"],
+            answer: 2,
+            explanation: "Geminiは主にオンデバイス用の「Nano」、高速かつコスト効率の高い「Flash」、幅広いタスクに対応する「Pro」、最も複雑なタスク向けの「Ultra」というサイズ展開を持っています。"
+        },
+        {
+            category: "基礎知識",
+            q: "スマートフォンなどのデバイス上で直接動作するよう設計された、Geminiの最も軽量なモデルは何ですか？",
+            options: ["Gemini Nano", "Gemini Lite", "Gemini Edge"],
+            answer: 0,
+            explanation: "Gemini Nanoは、スマートフォンなどのデバイス上でオンデバイス処理を行うために最適化された高効率モデルです。"
+        },
+        {
+            category: "基礎知識",
+            q: "LLM（大規模言語モデル）において、AIがテキストを処理する際の最小単位を何と呼びますか？",
+            options: ["ピクセル", "バイト", "トークン"],
+            answer: 2,
+            explanation: "AIはテキストを「トークン」という単位に分割して処理します。英語の場合は1単語が1〜数トークン、日本語の場合はひらがなや漢字によってトークンの分割が異なります。"
+        },
+        {
+            category: "基礎知識",
+            q: "Gemini 1.5 Proなどで話題になった「コンテキストウィンドウが非常に広い」とは、どのような利点がありますか？",
+            options: ["AIの返答スピードが速くなる", "一度の指示で長大な文書や長時間の動画などを大量に読み込ませることができる", "インターネットへの接続が不要になる"],
+            answer: 1,
+            explanation: "コンテキストウィンドウ（一度に処理できる情報量）が広いと、数百ページのPDFや長時間の動画などをまるごと読み込ませて分析や要約をさせることが可能になります。"
+        },
+        {
+            category: "基礎知識",
+            q: "AIが事実とは異なるもっともらしいウソの回答を生成してしまう現象を何と呼びますか？",
+            options: ["ハルシネーション（幻覚）", "オーバーフィッティング（過学習）", "シンギュラリティ（技術的特異点）"],
+            answer: 0,
+            explanation: "ハルシネーションは生成AI利用時の大きな課題です。AIは確率に基づいて言葉を繋ぎ合わせているため、事実確認（ファクトチェック）が不可欠です。"
+        },
+        {
+            category: "基礎知識",
+            q: "Googleの以前の対話型AIサービス「Bard」は、現在どうなりましたか？",
+            options: ["サービス終了し使えなくなった", "Geminiという名称に変更され統合された", "検索エンジンの一部としてのみ残っている"],
+            answer: 1,
+            explanation: "GoogleはAI技術のブランドを統一するため、2024年初頭に「Bard」を「Gemini」に名称変更しました。"
+        },
+        {
+            category: "基礎知識",
+            q: "有料プラン「Gemini Advanced」を利用する主なメリットは何ですか？",
+            options: ["広告が表示されなくなるだけ", "Googleの最上位・最新モデル（Ultraや1.5 Proなど）にアクセスでき、複雑なタスクを実行できる", "回答が常に100%正確になる"],
+            answer: 1,
+            explanation: "Gemini Advancedは、プログラミング、論理的推論、高度なクリエイティブ作業などに対応できる最上位クラスのモデルを利用できるサブスクリプションです。"
+        },
+        {
+            category: "基礎知識",
+            q: "「Gemini for Google Workspace」とは主にどのような機能ですか？",
+            options: ["GmailやGoogleドキュメント、スプレッドシート内で直接AIによる文章作成や要約の支援を受けられる機能", "Googleの社員と直接チャットできる機能", "Workspaceの利用料金が無料になる機能"],
+            answer: 0,
+            explanation: "ドキュメントでの文章のドラフト作成や、Gmailでの返信案作成など、普段の業務ツールにAIが組み込まれ生産性を向上させる機能群です。"
+        },
+        {
+            category: "基礎知識",
+            q: "AIの出力の「ランダム性」や「創造性」をコントロールするパラメータを何と呼びますか？",
+            options: ["Frequency (頻度)", "Temperature (温度)", "Brightness (明るさ)"],
+            answer: 1,
+            explanation: "Temperature（温度）を低く設定すると一貫性のある保守的な回答になり、高く設定すると創造的で多様な（時に予測不能な）回答になります。"
+        },
+        {
+            category: "基礎知識",
+            q: "特定の業務や専門知識に特化させるため、既存のAIモデルに追加でデータを学習させる手法を何と呼びますか？",
+            options: ["スクレイピング", "プロンプトエンジニアリング", "ファインチューニング"],
+            answer: 2,
+            explanation: "ファインチューニング（微調整）により、自社の専門用語や特定の出力フォーマットをモデルに深く学習させることができます。"
+        },
+        {
+            category: "基礎知識",
+            q: "Geminiのような生成AIを利用する際、セキュリティ観点で「絶対に入力してはいけないもの」はどれですか？",
+            options: ["一般的な業界の市場データ", "顧客の個人情報や会社の未公開の機密情報", "有名な歴史上の人物に関する質問"],
+            answer: 1,
+            explanation: "入力したデータがAIの学習に利用されたり、予期せぬ形で漏洩するリスクを防ぐため、個人情報や機密情報の入力は厳禁です（企業向けプランなど設定で保護されている場合を除く）。"
+        },
+        {
+            category: "基礎知識",
+            q: "Androidスマートフォンにおいて、Geminiアプリは何の代わりとしてデフォルトのアシスタントに設定できますか？",
+            options: ["Google マップ", "Google アシスタント", "Google Chrome"],
+            answer: 1,
+            explanation: "Androidでは、従来のGoogleアシスタントをGeminiに置き換えることで、より複雑な質問や画面上の情報に基づいたコンテキスト対応が可能になります。"
+        },
+        {
+            category: "基礎知識",
+            q: "Geminiの「画像生成」機能を使う際、注意すべき一般的な制限はどれですか？",
+            options: ["実在する特定の人物（政治家や有名人など）のリアルな画像生成は制限されていることが多い", "青色の画像は一切生成できない", "1日1枚しか生成できない"],
+            answer: 0,
+            explanation: "ディープフェイクや偽情報拡散を防ぐため、主要な生成AIは実在の人物の画像生成に厳しい安全ガードレールを設けています。"
+        },
+        {
+            category: "基礎知識",
+            q: "LLMを動かすための計算資源として、主に不可欠なハードウェアは何ですか？",
+            options: ["HDD（ハードディスク）", "GPU（画像処理半導体）やTPU（テンソル処理ユニット）", "Wi-Fiルーター"],
+            answer: 1,
+            explanation: "AIの膨大な並列計算を処理するためには、NVIDIAのGPUやGoogle独自のTPU（Tensor Processing Unit）といった高性能なアクセラレータが必要です。"
+        },
+        {
+            category: "基礎知識",
+            q: "API経由でGeminiを利用する際、開発者が必要とする認証キーを何と呼びますか？",
+            options: ["APIキー", "マスターパスワード", "ライセンスコード"],
+            answer: 0,
+            explanation: "プログラムからGeminiの機能にアクセスするには、Google AI Studioなどで発行される「APIキー」が必要です。"
+        },
+        {
+            category: "基礎知識",
+            q: "Geminiはコードの生成も得意ですが、対応している言語はどれですか？",
+            options: ["PythonやJavaScriptのみ", "HTMLやCSSのみ", "Python, Java, C++, Goなど20以上の幅広いプログラミング言語"],
+            answer: 2,
+            explanation: "Geminiは主要なプログラミング言語のほとんどをサポートしており、コードの生成、解説、デバッグなどが可能です。"
+        },
+        {
+            category: "基礎知識",
+            q: "生成AIモデルの規模を表す際によく使われる「パラメータ数」とは、直感的に何に例えられますか？",
+            options: ["AIの脳内にある「シナプス（神経回路の結びつき）」の数", "AIがインターネットに接続する速度", "AIが保存できる画像の枚数"],
+            answer: 0,
+            explanation: "パラメータは、モデルが学習データから獲得した知識やパターンの複雑さを表す指標で、脳のシナプスによく例えられます。"
+        },
+        {
+            category: "基礎知識",
+            q: "「グラウンディング（Grounding）」機能とは、Geminiにおいてどのような役割を果たしますか？",
+            options: ["背景の色を暗くする機能", "Google検索などの外部情報源と連携し、回答の正確性や最新性を裏付ける機能", "AIを初期化する機能"],
+            answer: 1,
+            explanation: "グラウンディングを利用することで、AIの回答が実際の検索結果や指定したドキュメントに基づいたものになり、ハルシネーションを減らすことができます。"
+        },
+        {
+            category: "基礎知識",
+            q: "Geminiがテキストを生成する仕組みを最も簡単に説明しているのはどれですか？",
+            options: ["入力された質問に対して、次に来る確率が最も高い単語（トークン）を次々と予測して繋げている", "インターネット上にある記事をそのままコピー＆ペーストしている", "内部にいる人間のオペレーターが回答を打ち込んでいる"],
+            answer: 0,
+            explanation: "LLMの基本原理は「次に続く確率が高い言葉の予測（Next Token Prediction）」の繰り返しです。"
+        },
+
+        // --- 応用・実践的な活用方法 (50%) ---
+        {
+            category: "実践的活用",
+            q: "AIに期待通りの回答を出させるための指示文を工夫する技術を何と呼びますか？",
+            options: ["プロンプトエンジニアリング", "データサイエンス", "バックエンド開発"],
+            answer: 0,
+            explanation: "プロンプト（指示文）の書き方一つで出力の質が大きく変わるため、その手法を研究・実践することをプロンプトエンジニアリングと呼びます。"
+        },
+        {
+            category: "実践的活用",
+            q: "プロンプトの質を上げるための基本として推奨される「明確な指示」の例はどれですか？",
+            options: ["「何か面白いこと書いて」", "「新商品のキャッチコピーを考えてください。ターゲットは20代女性、文字数は30文字以内、ポップなトーンで3案出してください」", "「適当に要約しといて」"],
+            answer: 1,
+            explanation: "目的、ターゲット、文字数、出力形式などの条件を具体的に指定することで、手戻りの少ない高品質な回答を得られます。"
+        },
+        {
+            category: "実践的活用",
+            q: "「あなたは経験10年のプロのWebライターです」のように、AIに特定の立場を付与する手法を何と呼びますか？",
+            options: ["ロール・プロンプティング", "ゼロショット・プロンプティング", "ネガティブ・プロンプト"],
+            answer: 0,
+            explanation: "役割（Role）を与えることで、AIはその専門家の視点や語彙を使って回答を生成しやすくなります。"
+        },
+        {
+            category: "実践的活用",
+            q: "複雑な論理問題を解かせる際、「ステップ・バイ・ステップで考えてください」と指示する手法を何と呼びますか？",
+            options: ["Chain of Thought (思考の連鎖)", "Few-shot prompting", "Brainstorming"],
+            answer: 0,
+            explanation: "Chain of Thought（CoT）は、AIに推論の途中過程を出力させることで、最終的な回答の精度を飛躍的に高める手法です。"
+        },
+        {
+            category: "実践的活用",
+            q: "「Few-shot プロンプティング」とはどのような手法ですか？",
+            options: ["文字数を極端に短く指示すること", "指示と一緒に、望ましい入力と出力の「具体例（例題）」をいくつか提示すること", "AIに複数回連続で同じ質問をすること"],
+            answer: 1,
+            explanation: "例（Shot）をいくつか（Few）提示することで、出力のフォーマットやトーン、分類の基準を正確にAIに伝えることができます。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiの回答が長すぎて読みにくい場合、どうプロンプトを改善すべきですか？",
+            options: ["「もっと短く」とだけ再送信する", "「重要なポイントを箇条書きで3点にまとめ、全体を200文字以内で出力してください」と再指示する", "PCの電源を再起動する"],
+            answer: 1,
+            explanation: "文字数制限や「箇条書きで」といった具体的なフォーマット指定を追加するのが最も確実な改善方法です。"
+        },
+        {
+            category: "実践的活用",
+            q: "アイデア出し（ブレインストーミング）にGeminiを使う最大のメリットは何ですか？",
+            options: ["常に世界で誰も思いつかない完璧な1つの正解を出してくれるから", "批判や忖度なしに、一瞬で多様な切り口のアイデアを大量に出力してくれるため、思考の壁打ち相手として最適だから", "自動的に特許を取得してくれるから"],
+            answer: 1,
+            explanation: "AIの強みは「質より量」のアイデア出しです。AIが出した大量のアイデアの種から、人間がインスピレーションを得て磨き上げる使い方が効果的です。"
+        },
+        {
+            category: "実践的活用",
+            q: "GeminiにExcelやスプレッドシートの関数を作ってもらいたい場合、どのようなプロンプトが良いですか？",
+            options: ["「Excel教えて」", "「A列に日付、B列に売上があります。B列の売上が1万円以上のセルだけを合計する関数を教えてください」", "「スプレッドシートの関数を全部リストアップして」"],
+            answer: 1,
+            explanation: "データの構造（どの列に何があるか）と、達成したい目的を具体的に記述することで、そのままコピペして使える正確な数式が得られます。"
+        },
+        {
+            category: "実践的活用",
+            q: "長い英語のビジネスメールを日本語に翻訳したい際、より自然な結果を得るための工夫はどれですか？",
+            options: ["ただ「翻訳して」とだけ送る", "「これは取引先への重要なメールです。ビジネスシーンにふさわしい、丁寧かつ自然な日本語の敬語で翻訳してください」と背景とトーンを指定する", "英語の辞書を一緒にアップロードする"],
+            answer: 1,
+            explanation: "翻訳タスクでも、文脈（誰宛か、どんなシーンか）を指定することで、直訳ではない自然な意訳を引き出すことができます。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiに出力結果をそのまま資料に貼り付けやすい形式にしたい場合、どう指示すればよいですか？",
+            options: ["「表形式（Markdown）で出力して」と形式を指定する", "「綺麗にして」とお願いする", "「画像にして出力して」と指示する（※テキストデータの場合）"],
+            answer: 0,
+            explanation: "「表形式」「Markdown形式」「CSV形式」など、出力フォーマットを明示することで、その後の人間側の作業コストを大幅に削減できます。"
+        },
+        {
+            category: "実践的活用",
+            q: "プログラムのコードにエラーがあり原因がわからない場合、Geminiにどう依頼するのが最も効果的ですか？",
+            options: ["「コードが動きません。直して」", "「以下のコードを実行すると『〇〇』というエラーメッセージが出ます。原因と修正案を教えてください。 [コードを貼り付け]」", "「プログラミングを一から教えて」"],
+            answer: 1,
+            explanation: "エラーメッセージそのものと、該当するコードの両方を提供することで、AIは的確にバグを特定しやすくなります。"
+        },
+        {
+            category: "実践的活用",
+            q: "作成した文章をGeminiに添削してもらう際、ただ「直して」と言うより良い方法は？",
+            options: ["「文字数を増やして」", "「この文章を、より説得力があり簡潔な表現に添削し、修正した箇所とその理由も教えてください」", "「全部書き直して」"],
+            answer: 1,
+            explanation: "修正の方向性（説得力、簡潔さ）を指定し、さらに「修正理由」を求めると、自身のライティングスキル向上にも繋がります。"
+        },
+        {
+            category: "実践的活用",
+            q: "専門用語が多い難しい文章を理解したい場合、Geminiにどう頼むと良いですか？",
+            options: ["「英語に翻訳して」", "「この文章を、IT知識のない中学生でも理解できるように、身近な例えを使って平易な言葉で説明し直して」", "「文字を大きくして」"],
+            answer: 1,
+            explanation: "ターゲット読者（中学生など）や「例え話を使って」という条件を付与することで、AIは概念を噛み砕いて説明してくれます。"
+        },
+        {
+            category: "実践的活用",
+            q: "情報が古い可能性があるテーマについてGeminiに質問する際、安全なアプローチはどれですか？",
+            options: ["AIの回答を100%そのまま信じる", "「最新の情報をウェブ検索して、情報源のリンクと共に回答してください」と指示し、ファクトチェックを行う", "過去の出来事しか質問しない"],
+            answer: 1,
+            explanation: "Gemini（特にウェブ版）はGoogle検索と連携できます。検索機能の使用を促し、ソース（情報源）を確認する癖をつけることが重要です。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiが作成したメール文面が少し冷たい印象でした。どう再指示（リライト依頼）しますか？",
+            options: ["「もっと長文にして」", "「もう少し親しみやすく、温かみのあるトーンに書き直して」", "「英語にして」"],
+            answer: 1,
+            explanation: "「トーン（語気や雰囲気）」の調整は生成AIの得意分野です。「フォーマルに」「親しみやすく」「情熱的に」など指定するだけで簡単に修正してくれます。"
+        },
+        {
+            category: "実践的活用",
+            q: "PDFの報告書をGeminiに読み込ませて質問する際、最も適した質問の仕方はどれですか？",
+            options: ["「この文書について適当に教えて」", "「このPDFの3章に記載されている『来期の課題』を3つのポイントに要約してください」", "「このPDFを書いて」"],
+            answer: 1,
+            explanation: "ドキュメントを与える場合でも、どの部分の、何を知りたいのかを具体的に質問する方が、精度の高い抽出と要約が行われます。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiに「ゼロショット」でタスクを依頼するのはどんな時が適していますか？",
+            options: ["独自の複雑なルールに基づくデータ分類をさせる時", "一般的な常識や知識で十分回答できる、単純な質問や要約をさせる時", "社内の専門用語を翻訳させる時"],
+            answer: 1,
+            explanation: "ゼロショット（例示なし）は一般的なタスクには十分機能します。複雑なタスクや独自ルールがある場合は、Few-shot（例示あり）が必要です。"
+        },
+        {
+            category: "実践的活用",
+            q: "自分の考えに対して客観的な意見が欲しい時、Geminiにどう指示すると効果的ですか？",
+            options: ["「私の考えを褒めてください」", "「私のこの事業アイデアに対して、想定されるリスクや反論を『意地悪な投資家』の視点で3つ挙げてください」", "「このアイデアは成功しますか？」"],
+            answer: 1,
+            explanation: "AIに「批判的な視点」や「特定のペルソナ（投資家など）」を演じさせることで、盲点に気づくための強力な壁打ち相手になります。"
+        },
+        {
+            category: "実践的活用",
+            q: "画像をGeminiにアップロードして行うタスクとして、不適切なものはどれですか？",
+            options: ["手書きのメモの画像をテキストデータに変換させる", "グラフの画像を読み込ませて、その傾向を文章で説明させる", "他人の顔写真をアップロードして、その人の個人情報や住所を特定させる"],
+            answer: 2,
+            explanation: "AIを使って個人の身元を特定したりプライバシーを侵害する行為は、システムの利用規約違反であり倫理的にも禁止されています。"
+        },
+        {
+            category: "実践的活用",
+            q: "プレゼンテーションの構成をGeminiと作る際、推奨される進め方はどれですか？",
+            options: ["いきなり「スライド全ページの文章を書いて」と頼む", "まず「目的とターゲット」を伝えて「スライド全体の目次（アウトライン）案」を作成させ、合意してから各ページの詳細を詰めさせる", "AIに全部お任せして自分では確認しない"],
+            answer: 1,
+            explanation: "大きなタスクは「分割」して進めるのがコツです。まず骨組み（アウトライン）を作り、方向性が合っているか確認してから肉付けをさせます。"
+        },
+        {
+            category: "実践的活用",
+            q: "ブログ記事のタイトル案を出させる際、より良い結果を得るためのプロンプトは？",
+            options: ["「タイトル考えて」", "「以下の記事内容に基づき、読者がクリックしたくなるような魅力的なタイトル案を、異なる切り口（疑問系、数字入り、感情訴求）で10個提案してください」", "「一番いいタイトルを1つだけ教えて」"],
+            answer: 1,
+            explanation: "バリエーションの条件（数字入りなど）や出力数（10個）を具体的に指定することで、選択肢の幅が広がり実用的になります。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiにコードを書いてもらった後、それを安全に利用するために人間が行うべきことは何ですか？",
+            options: ["何も確認せずに本番環境にデプロイする", "コードの内容を理解し、セキュリティの脆弱性やバグがないかテスト・レビューする", "コードを印刷してファイリングする"],
+            answer: 1,
+            explanation: "AIが生成したコードは完璧とは限りません。必ず開発者自身が内容を理解し、動作確認とセキュリティチェックを行う責任があります。"
+        },
+        {
+            category: "実践的活用",
+            q: "欲しい回答のニュアンスがうまく伝わらない時、どのような情報を追加すると伝わりやすいですか？",
+            options: ["「Do NOT」という禁止事項を大量に並べる", "「例えば、前回は〇〇という形式で作りました」のように、理想とする完成品の「サンプル」を提示する", "文字を全部大文字にして怒っていることを伝える"],
+            answer: 1,
+            explanation: "言葉で長々と説明するよりも、理想とする出力の具体例（サンプル）を1つ提示する方が、AIにとって最も明確な指示になります。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiを英語学習のサポートに使う際、効果的なプロンプトはどれですか？",
+            options: ["「英語教えて」", "「私は英語初心者です。レストランでの注文の会話練習をしたいので、あなたが店員役、私が客役になって、1往復ずつ英語でチャットしましょう。私の文法が間違っていたら都度指摘してください」", "「辞書を全部出力して」"],
+            answer: 1,
+            explanation: "ロールプレイの設定、進行方法（1往復ずつ）、フィードバックの要否（文法指摘）を明確にすることで、優れた個別チューターになります。"
+        },
+        {
+            category: "実践的活用",
+            q: "Geminiに「やらないでほしいこと」を指示する場合のコツは何ですか？",
+            options: ["「〇〇しないで」と否定形で書くよりも、「代わりに△△してください」と肯定形で具体的な代替案を示す方がうまく動作しやすい", "とにかく「絶対禁止」と何回も書く", "諦める"],
+            answer: 0,
+            explanation: "LLMは否定形（〜しないで）をうまく処理できないことがあります。何をすべきか（肯定形）を明示する方が指示に従いやすくなります。"
+        },
+
+        // --- 雑学 (10%) ---
+        {
+            category: "雑学",
+            q: "Geminiを主導して開発している、Google傘下の世界的なAI研究組織の名前は何ですか？",
+            options: ["Google DeepMind", "OpenAI", "Anthropic"],
+            answer: 0,
+            explanation: "アルファ碁（AlphaGo）などで知られるDeepMind社と、GoogleのAI研究チーム（Brain）が統合されて誕生した「Google DeepMind」がGeminiを開発しています。"
+        },
+        {
+            category: "雑学",
+            q: "Google DeepMindのCEOであり、AI研究の世界的権威である人物は誰ですか？",
+            options: ["サム・アルトマン", "デミス・ハサビス", "イーロン・マスク"],
+            answer: 1,
+            explanation: "デミス・ハサビス氏はDeepMindの共同創業者であり、現在はGoogle DeepMindのCEOとしてGeminiプロジェクトを率い、ノーベル化学賞も受賞しました。"
+        },
+        {
+            category: "雑学",
+            q: "現在、GoogleおよびAlphabetのCEO（最高経営責任者）を務め、Geminiの発表でも前面に立っている人物は誰ですか？",
+            options: ["ラリー・ペイジ", "マーク・ザッカーバーグ", "スンダー・ピチャイ"],
+            answer: 2,
+            explanation: "スンダー・ピチャイ氏はGoogleのCEOであり、Googleを「AIファースト」の企業へと変革するリーダーシップをとっています。"
+        },
+        {
+            category: "雑学",
+            q: "「Gemini」という名前の由来の一部とも言われており、NASAの宇宙開発計画の名前にもなった星座は何ですか？",
+            options: ["オリオン座", "ふたご座 (Gemini)", "おおぐま座"],
+            answer: 1,
+            explanation: "Geminiはラテン語で「ふたご座」を意味します。DeepMindとGoogle Brainという2つの組織の統合や、アポロ計画への架け橋となったNASAのジェミニ計画などの意味が込められています。"
+        },
+        {
+            category: "雑学",
+            q: "Googleが最初のGeminiモデル（Gemini 1.0）を正式に発表した年はいつですか？",
+            options: ["2021年", "2023年", "2025年"],
+            answer: 1,
+            explanation: "Gemini 1.0は2023年12月に正式発表されました。その後、急速に1.5 Proなどのアップデートが続いています。"
+        }
+    ];
+
+    // 状態管理変数
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let isAnswered = false; // 1問あたりの二重回答防止
+    let answerHistory = []; // CSV出力用の回答履歴
+    
+    // カテゴリ別スコア管理
+    let categoryScores = {
+        "基礎知識": { correct: 0, total: 0, color: "var(--google-blue)" },
+        "実践的活用": { correct: 0, total: 0, color: "var(--google-green)" },
+        "雑学": { correct: 0, total: 0, color: "var(--google-yellow)" }
+    };
+
+    // DOM要素
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const progressText = document.getElementById('progress-text');
+    const categoryBadge = document.getElementById('category-badge');
+    const progressBar = document.getElementById('progress-bar');
+    
+    const feedbackArea = document.getElementById('feedback-area');
+    const feedbackResult = document.getElementById('feedback-result');
+    const feedbackExp = document.getElementById('feedback-explanation');
+    const nextBtn = document.getElementById('next-btn');
+
+    // --- ブラウザ保存 (LocalStorage) 機能 ---
+    function saveProgress() {
+        const progress = {
+            currentIndex: currentQuestionIndex,
+            score: score,
+            history: answerHistory,
+            catScores: categoryScores,
+            isAnswered: isAnswered
+        };
+        localStorage.setItem('geminiQuizProgress', JSON.stringify(progress));
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem('geminiQuizProgress');
+        if (saved) {
+            try {
+                const progress = JSON.parse(saved);
+                currentQuestionIndex = progress.currentIndex;
+                score = progress.score;
+                answerHistory = progress.history;
+                categoryScores = progress.catScores;
+                
+                // フィードバック表示中（回答済み）に離脱した場合は、強制的に次の問題から再開する
+                if (progress.isAnswered) {
+                    currentQuestionIndex++;
+                }
+
+                if (currentQuestionIndex > 0 && currentQuestionIndex < quizData.length) {
+                    updateStartScreen();
+                } else if (currentQuestionIndex >= quizData.length) {
+                    clearProgress(); // 全問完了状態でリロードした場合はクリア
+                }
+            } catch (e) {
+                console.error("進行状況の読み込みに失敗しました", e);
+                clearProgress();
+            }
+        }
+    }
+
+    function clearProgress() {
+        localStorage.removeItem('geminiQuizProgress');
+    }
+    // ---------------------------------------
+
+    // クイズ開始 (新規)
+    function startQuiz() {
+        startScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        currentQuestionIndex = 0;
+        score = 0;
+        answerHistory = [];
+        clearProgress(); // 新規開始時に保存データをクリア
+        
+        // カテゴリスコアの初期化
+        for (let cat in categoryScores) {
+            categoryScores[cat].correct = 0;
+            categoryScores[cat].total = 0;
+        }
+
+        // 事前に各カテゴリの総数を計算
+        quizData.forEach(q => {
+            if (categoryScores[q.category]) {
+                categoryScores[q.category].total++;
+            }
+        });
+
+        showQuestion();
+    }
+
+    // 問題の表示
+    function showQuestion() {
+        isAnswered = false;
+        feedbackArea.classList.add('hidden');
+        
+        const currentQuiz = quizData[currentQuestionIndex];
+        
+        // UI更新
+        progressText.innerText = `${currentQuestionIndex + 1} / ${quizData.length}`;
+        categoryBadge.innerText = currentQuiz.category;
+        
+        const progressPercent = ((currentQuestionIndex) / quizData.length) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+
+        questionText.innerText = currentQuiz.q;
+        optionsContainer.innerHTML = '';
+
+        currentQuiz.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.innerText = option;
+            button.classList.add('option-btn');
+            button.onclick = () => handleAnswer(index, button);
+            optionsContainer.appendChild(button);
+        });
+    }
+
+    // 回答処理 (即時フィードバック)
+    function handleAnswer(selectedIndex, selectedBtn) {
+        if (isAnswered) return;
+        isAnswered = true;
+        
+        const currentQuiz = quizData[currentQuestionIndex];
+        const isCorrect = (selectedIndex === currentQuiz.answer);
+        
+        // スコア加算
+        if (isCorrect) {
+            score++;
+            if (categoryScores[currentQuiz.category]) {
+                categoryScores[currentQuiz.category].correct++;
+            }
+        }
+
+        // 回答履歴の記録 (CSV用)
+        answerHistory.push({
+            qNum: currentQuestionIndex + 1,
+            category: currentQuiz.category,
+            question: currentQuiz.q,
+            userAnswer: currentQuiz.options[selectedIndex],
+            correctAnswer: currentQuiz.options[currentQuiz.answer],
+            isCorrect: isCorrect ? '〇' : '×'
+        });
+
+        // ★解答したタイミングで状態をブラウザに保存
+        saveProgress();
+
+        // 選択肢のスタイル更新
+        const allButtons = optionsContainer.querySelectorAll('.option-btn');
+        allButtons.forEach((btn, idx) => {
+            btn.disabled = true; // 全ボタン無効化
+            if (idx === currentQuiz.answer) {
+                btn.classList.add('correct'); // 正解を強調
+            } else if (idx === selectedIndex && !isCorrect) {
+                btn.classList.add('incorrect'); // 間違えた選択肢を赤く
+            }
+        });
+
+        // フィードバック表示
+        feedbackArea.classList.remove('hidden', 'correct', 'incorrect');
+        
+        if (isCorrect) {
+            feedbackArea.classList.add('correct');
+            feedbackResult.innerText = "⭕ 正解！";
+        } else {
+            feedbackArea.classList.add('incorrect');
+            feedbackResult.innerText = "❌ 不正解...";
+        }
+        
+        feedbackExp.innerHTML = `<strong>解説:</strong><br>${currentQuiz.explanation}`;
+        
+        // 最終問題の場合はボタンテキストを変更
+        if (currentQuestionIndex === quizData.length - 1) {
+            nextBtn.innerText = "結果を見る";
+        } else {
+            nextBtn.innerText = "次の問題へ";
+        }
+        
+        // 少しスクロールして解説を見やすくする
+        setTimeout(() => {
+            feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
+
+    // 次へボタンの処理
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < quizData.length) {
+            showQuestion();
+        } else {
+            progressBar.style.width = '100%';
+            showResults();
+        }
+    }
+
+    // 結果表示
+    function showResults() {
+        clearProgress(); // 完了したら保存データを消す
+
+        quizScreen.classList.add('hidden');
+        resultScreen.classList.remove('hidden');
+
+        document.getElementById('final-score').innerText = `${score}`;
+        const accuracy = Math.round((score / quizData.length) * 100);
+        document.getElementById('final-accuracy').innerText = `正答率: ${accuracy}%`;
+
+        renderCategoryStats();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // カテゴリ別の成績表示
+    function renderCategoryStats() {
+        const container = document.getElementById('category-stats-container');
+        container.innerHTML = '';
+
+        for (const [catName, stats] of Object.entries(categoryScores)) {
+            if (stats.total === 0) continue;
+            
+            const percent = Math.round((stats.correct / stats.total) * 100);
+            
+            const row = document.createElement('div');
+            row.className = 'stat-row';
+            row.innerHTML = `
+                <div class="stat-label">${catName}</div>
+                <div class="stat-bar-container">
+                    <div class="stat-bar" style="width: ${percent}%; background-color: ${stats.color};"></div>
+                </div>
+                <div class="stat-value">${percent}%</div>
+            `;
+            container.appendChild(row);
+        }
+    }
+
+    // X(Twitter)シェア機能
+    function shareOnX() {
+        const accuracy = Math.round((score / quizData.length) * 100);
+        const text = `GoogleのAIを学ぶ「Gemini Master Quiz」に挑戦しました！\n\n結果: ${score} / ${quizData.length}問 正解 🎉\n（正答率 ${accuracy}%）\n\n#GeminiQuiz #生成AI #GoogleGemini`;
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+
+    // CSVダウンロード機能 (エクセル対応)
+    function downloadCSV() {
+        if (answerHistory.length === 0) return;
+
+        // エクセルで文字化けしないためのBOM(Byte Order Mark)
+        const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        
+        // ヘッダー行
+        let csvContent = "問題番号,カテゴリ,問題文,あなたの回答,正解,判定\n";
+        
+        // データ行
+        answerHistory.forEach(row => {
+            // カンマや改行が含まれる場合を考慮してダブルクォーテーションで囲み、内部のダブルクォーテーションはエスケープする
+            const qNum = row.qNum;
+            const category = `"${row.category.replace(/"/g, '""')}"`;
+            const question = `"${row.question.replace(/"/g, '""')}"`;
+            const userAnswer = `"${row.userAnswer.replace(/"/g, '""')}"`;
+            const correctAnswer = `"${row.correctAnswer.replace(/"/g, '""')}"`;
+            const isCorrect = row.isCorrect;
+            
+            csvContent += `${qNum},${category},${question},${userAnswer},${correctAnswer},${isCorrect}\n`;
+        });
+
+        const blob = new Blob([bom, csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "gemini_quiz_result.csv");
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // クイズの中断・ホームへ戻るモーダル制御
+    function showHomeConfirmModal() {
+        document.getElementById('home-confirm-modal').classList.remove('hidden');
+    }
+
+    function closeHomeConfirmModal() {
+        document.getElementById('home-confirm-modal').classList.add('hidden');
+    }
+
+    function returnToHome() {
+        saveProgress(); // 念のため現在の状態を確実に保存
+        closeHomeConfirmModal();
+        quizScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        updateStartScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ホーム画面の進行状況表示更新
+    function updateStartScreen() {
+        const startBtn = document.getElementById('start-btn');
+        const resumeActions = document.getElementById('resume-actions');
+        const resumeText = document.getElementById('resume-text');
+
+        // 解答途中（0より大きく、全問未満）の場合
+        if (currentQuestionIndex > 0 && currentQuestionIndex < quizData.length) {
+            startBtn.classList.add('hidden');
+            resumeActions.classList.remove('hidden');
+            resumeText.innerText = `現在 問${currentQuestionIndex + 1} まで進行中`;
+        } else {
+            startBtn.classList.remove('hidden');
+            resumeActions.classList.add('hidden');
+        }
+    }
+
+    // 続きから再開
+    function resumeQuiz() {
+        startScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        showQuestion(); // 保存されたインデックスに基づいて画面を再構築
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // クイズのリスタート (最初からやり直す)
+    function restartQuiz() {
+        resultScreen.classList.add('hidden');
+        startScreen.classList.remove('hidden');
+        currentQuestionIndex = 0; // 状態を初期化
+        clearProgress();          // 保存データも削除
+        updateStartScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ★ ページ読み込み時に保存された状態を復元する
+    window.onload = function() {
+        loadProgress();
+    };
+
+</script>
+</body>
+</html>
